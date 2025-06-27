@@ -6,6 +6,7 @@ import { ActivePoll } from '@/types/poll';
 
 const mockPolls: ActivePoll[] = [
   {
+    pollId: BigInt(1),
     content: {
       creator: '0x1234567890123456789012345678901234567890',
       subject: 'What\'s the future of Web3 voting?',
@@ -31,10 +32,12 @@ const mockPolls: ActivePoll[] = [
       endTime: BigInt(Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60), // 7 days from now
       funds: BigInt('75000000000000000'), // 0.075 BTC
       rewardToken: '0x0000000000000000000000000000000000000000',
-      rewardDistribution: 'equal'
+      rewardDistribution: 'equal',
+      totalResponses: BigInt(0)
     }
   },
   {
+    pollId: BigInt(2),
     content: {
       creator: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
       subject: 'Best blockchain for DeFi applications?',
@@ -61,10 +64,12 @@ const mockPolls: ActivePoll[] = [
       endTime: BigInt(Math.floor(Date.now() / 1000) + 11 * 24 * 60 * 60), // 11 days from now
       funds: BigInt('350000000000000000'), // 0.35 BTC
       rewardToken: '0x0000000000000000000000000000000000000000',
-      rewardDistribution: 'weighted'
+      rewardDistribution: 'weighted',
+      totalResponses: BigInt(0)
     }
   },
   {
+    pollId: BigInt(3),
     content: {
       creator: '0x9876543210987654321098765432109876543210',
       subject: 'Community Fund Allocation Priority',
@@ -90,7 +95,8 @@ const mockPolls: ActivePoll[] = [
       endTime: BigInt(Math.floor(Date.now() / 1000) + 3 * 24 * 60 * 60 + 18 * 60 * 60), // 3d 18h from now
       funds: BigInt('200000000000000000'), // 0.2 BTC
       rewardToken: '0x0000000000000000000000000000000000000000',
-      rewardDistribution: 'equal'
+      rewardDistribution: 'equal',
+      totalResponses: BigInt(0)
     }
   }
 ];
@@ -112,9 +118,9 @@ export function MockPollList() {
       </div>
       
       <div className="grid gap-6">
-        {mockPolls.map((poll, index) => (
+        {mockPolls.map((poll) => (
           <PollCard 
-            key={`demo-poll-${index}`} 
+            key={poll.pollId.toString()} 
             poll={poll} 
             onVote={() => alert('Demo mode: Connect your wallet and configure contracts to vote on real polls!')}
           />

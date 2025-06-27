@@ -12,6 +12,7 @@ export function usePollsContract() {
   return useMemo(() => {
     console.log('Contract address:', CONTRACT_ADDRESSES.POLLS_DAPP);
     console.log('Public client:', !!publicClient);
+    console.log('Wallet client:', !!walletClient);
     
     if (!CONTRACT_ADDRESSES.POLLS_DAPP) {
       console.error('POLLS_DAPP contract address not configured');
@@ -25,12 +26,15 @@ export function usePollsContract() {
 
     try {
       const provider = getEthersProvider();
+      
+      // For now, always use provider - we'll handle signer in the component
       const contract = new ethers.Contract(
         CONTRACT_ADDRESSES.POLLS_DAPP,
         POLLS_DAPP_ABI,
         provider
       );
-      console.log('Contract initialized successfully with ethers');
+      console.log('Contract initialized with provider');
+      
       return contract;
     } catch (error) {
       console.error('Error initializing contract:', error);

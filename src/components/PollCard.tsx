@@ -1,13 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ActivePoll } from '@/types/poll';
 import { formatAddress, formatBigInt } from '@/lib/utils';
 import { usePollsContract } from '@/hooks/useContract';
 import { Clock, Users, DollarSign, Vote } from 'lucide-react';
+import { ethers } from 'ethers';
+import { CONTRACT_ADDRESSES } from '@/constants/contracts';
+import { POLLS_DAPP_ABI } from '@/constants/abi';
 
 interface PollCardProps {
   poll: ActivePoll;
@@ -16,25 +19,38 @@ interface PollCardProps {
 
 export function PollCard({ poll, onVote }: PollCardProps) {
   const { address } = useAccount();
+  const { data: walletClient } = useWalletClient();
   const contract = usePollsContract();
   const [isVoting, setIsVoting] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [showVoteForm, setShowVoteForm] = useState(false);
 
   const handleVote = async () => {
-    if (!contract || !address || !selectedOption) return;
+    if (!address || !selectedOption || !walletClient) return;
 
     try {
       setIsVoting(true);
       
-      // Get poll ID from contract - we'll need to implement this
-      // For now, we'll use a placeholder
-      const pollId = BigInt(0); // This should be fetched from the contract
+      const pollId = poll.pollId; // Use the poll ID from the poll prop
       
       const minContribution = poll.settings.minContribution;
-      await contract.write.submitResponse([pollId, selectedOption], { 
+      
+      // Create a signer and contract for write operations
+      const provider = new ethers.BrowserProvider(walletClient.transport);
+      const signer = await provider.getSigner();
+      const contractWithSigner = new ethers.Contract(
+        CONTRACT_ADDRESSES.POLLS_DAPP,
+        POLLS_DAPP_ABI,
+        signer
+      );
+      
+      // Use ethers.js syntax for contract interaction
+      const tx = await contractWithSigner.submitResponse(pollId, selectedOption, { 
         value: minContribution 
       });
+      
+      // Wait for transaction confirmation
+      await tx.wait();
       
       setShowVoteForm(false);
       setSelectedOption('');
@@ -106,7 +122,7 @@ export function PollCard({ poll, onVote }: PollCardProps) {
             
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-muted-foreground" />
-              <span>{poll.settings.maxResponses.toString()} max</span>
+              <span>{poll.settings.totalResponses.toString()}/{poll.settings.maxResponses.toString()} responses</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -136,13 +152,30 @@ export function PollCard({ poll, onVote }: PollCardProps) {
           {poll.content.isOpen && address && (
             <div className="border-t pt-4">
               {!showVoteForm ? (
-                <Button 
-                  onClick={() => setShowVoteForm(true)}
-                  className="w-full"
-                  variant="outline"
-                >
-                  Vote on this Poll
-                </Button>
+                <div className="space-y-2">
+                  {poll.settings.totalResponses >= poll.settings.maxResponses ? (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        This poll has reached the maximum number of responses ({poll.settings.maxResponses.toString()})
+                      </p>
+                      <Button 
+                        disabled
+                        className="w-full"
+                        variant="outline"
+                      >
+                        Poll Full
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button 
+                      onClick={() => setShowVoteForm(true)}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      Vote on this Poll
+                    </Button>
+                  )}
+                </div>
               ) : (
                 <div className="space-y-3">
                   <div>

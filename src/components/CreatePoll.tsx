@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,6 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { usePollsContract } from '@/hooks/useContract';
 import { parseBigInt } from '@/lib/utils';
 import { Plus, Trash2 } from 'lucide-react';
+import { ethers } from 'ethers';
+import { CONTRACT_ADDRESSES } from '@/constants/contracts';
+import { POLLS_DAPP_ABI } from '@/constants/abi';
 
 interface CreatePollForm {
   subject: string;
@@ -29,6 +32,7 @@ interface CreatePollForm {
 
 export function CreatePoll() {
   const { address } = useAccount();
+  const { data: walletClient } = useWalletClient();
   const contract = usePollsContract();
   const [isCreating, setIsCreating] = useState(false);
   const [form, setForm] = useState<CreatePollForm>({
@@ -73,7 +77,7 @@ export function CreatePoll() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contract || !address) return;
+    if (!contract || !address || !walletClient) return;
 
     try {
       setIsCreating(true);
@@ -98,7 +102,20 @@ export function CreatePoll() {
 
       const value = form.isOpenImmediately ? parseBigInt(form.targetFund) : BigInt(0);
       
-      await contract.write.createPoll([pollParams], { value });
+      // Create a signer and contract for write operations
+      const provider = new ethers.BrowserProvider(walletClient.transport);
+      const signer = await provider.getSigner();
+      const contractWithSigner = new ethers.Contract(
+        CONTRACT_ADDRESSES.POLLS_DAPP,
+        POLLS_DAPP_ABI,
+        signer
+      );
+      
+      // Use ethers.js syntax for contract interaction
+      const tx = await contractWithSigner.createPoll(pollParams, { value });
+      
+      // Wait for transaction confirmation
+      await tx.wait();
       
       // Reset form
       setForm({
