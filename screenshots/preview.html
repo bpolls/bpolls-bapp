@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPolls - Screenshot Preview</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .screenshot-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .screenshot-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .screenshot-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a202c;
+        }
+        .screenshot-desc {
+            color: #4a5568;
+            font-size: 14px;
+        }
+        .features {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .feature-card {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 40px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🗳️ BPolls</h1>
+            <p>Decentralized Polling on Citrea Blockchain</p>
+            <p>Create polls • Vote • Earn rewards • Shape the future</p>
+        </div>
+
+        <div class="header">
+            <h1>📸 Screenshot Reference Guide</h1>
+            <p>Use this as a reference for the screenshots you need to take of the live application at <strong>http://localhost:3001</strong></p>
+        </div>
+
+        <div class="screenshots-grid">
+            <div class="screenshot-card">
+                <div class="screenshot-placeholder">
+                    🏠 Home Page
+                </div>
+                <div class="screenshot-title">1. Home Page (home-page.png)</div>
+                <div class="screenshot-desc">Landing page with BPolls branding, navigation, welcome message, and active polls list. Show the clean, professional layout.</div>
+            </div>
+
+            <div class="screenshot-card">
+                <div class="screenshot-placeholder">
+                    🔗 Wallet Connect
+                </div>
+                <div class="screenshot-title">2. Wallet Connection (wallet-connect.png)</div>
+                <div class="screenshot-desc">Click "Connect Wallet" to show the wallet selection modal with MetaMask and WalletConnect options.</div>
+            </div>
+
+            <div class="screenshot-card">
+                <div class="screenshot-placeholder">
+                    ✅ Connected State
+                </div>
+                <div class="screenshot-title">3. Connected Wallet (wallet-connected.png)</div>
+                <div class="screenshot-desc">After connecting, show the truncated wallet address in the header with disconnect button.</div>
+            </div>
+
+            <div class="screenshot-card">
+                <div class="screenshot-placeholder">
+                    📝 Create Poll
+                </div>
+                <div class="screenshot-title">4. Create Poll Form (create-poll.png)</div>
+                <div class="screenshot-desc">Click "Create Poll" tab to show the complete poll creation form with all fields and options.</div>
+            </div>
+
+            <div class="screenshot-card">
+                <div class="screenshot-placeholder">
+                    📋 Filled Form
+                </div>
+                <div class="screenshot-title">5. Filled Poll Form (create-poll-filled.png)</div>
+                <div class="screenshot-desc">Fill out the form with sample data like "What's your favorite blockchain?" with realistic options.</div>
+            </div>
+
+            <div class="screenshot-card">
+                <div class="screenshot-placeholder">
+                    🗳️ Voting UI
+                </div>
+                <div class="screenshot-title">6. Voting Interface (voting-interface.png)</div>
+                <div class="screenshot-desc">Click "Vote on this Poll" to show the expanded voting interface with radio buttons and submit option.</div>
+            </div>
+
+            <div class="screenshot-card">
+                <div class="screenshot-placeholder">
+                    📱 Mobile View
+                </div>
+                <div class="screenshot-title">7. Mobile Responsive (mobile-view.png)</div>
+                <div class="screenshot-desc">Resize browser to 375px width to show how the app looks on mobile devices.</div>
+            </div>
+
+            <div class="screenshot-card">
+                <div class="screenshot-placeholder">
+                    📊 Poll Results
+                </div>
+                <div class="screenshot-title">8. Poll Results (poll-results.png)</div>
+                <div class="screenshot-desc">If available, show poll results with progress bars, percentages, and vote counts.</div>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>🎯 Key Features to Highlight</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🗳️</div>
+                    <h3>Decentralized Polling</h3>
+                    <p>Blockchain-secured voting</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Earn Rewards</h3>
+                    <p>Get paid for participation</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Real-time Results</h3>
+                    <p>Live blockchain updates</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Citrea Integration</h3>
+                    <p>Native blockchain support</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile Responsive</h3>
+                    <p>Works on any device</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Transparent</h3>
+                    <p>Verifiable on-chain voting</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

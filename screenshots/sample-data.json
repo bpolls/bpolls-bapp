@@ -1,0 +1,111 @@
+{
+  "samplePolls": [
+    {
+      "subject": "What's the future of Web3 voting?",
+      "description": "Help shape the future of decentralized governance by sharing your thoughts on Web3 voting mechanisms.",
+      "category": "Technology",
+      "options": [
+        "On-chain voting with tokens",
+        "Zero-knowledge proof voting",
+        "Hybrid on/off-chain systems",
+        "Traditional systems are fine"
+      ],
+      "creator": "0x1234...5678",
+      "durationDays": 7,
+      "rewardPerResponse": "0.001",
+      "maxResponses": 500,
+      "currentResponses": 127,
+      "isOpen": true,
+      "timeRemaining": "5d 12h"
+    },
+    {
+      "subject": "Best blockchain for DeFi applications?",
+      "description": "Which blockchain do you think offers the best infrastructure for decentralized finance applications?",
+      "category": "Finance",
+      "options": [
+        "Ethereum",
+        "Citrea",
+        "Polygon",
+        "Solana",
+        "Other"
+      ],
+      "creator": "0xabcd...ef01",
+      "durationDays": 14,
+      "rewardPerResponse": "0.002",
+      "maxResponses": 1000,
+      "currentResponses": 234,
+      "isOpen": true,
+      "timeRemaining": "11d 6h"
+    },
+    {
+      "subject": "Community Fund Allocation Priority",
+      "description": "How should we prioritize the allocation of our community development fund?",
+      "category": "Governance",
+      "options": [
+        "Developer incentives",
+        "Marketing and adoption",
+        "Infrastructure improvements",
+        "Community events"
+      ],
+      "creator": "0x9876...3210",
+      "durationDays": 10,
+      "rewardPerResponse": "0.0015",
+      "maxResponses": 750,
+      "currentResponses": 456,
+      "isOpen": true,
+      "timeRemaining": "3d 18h"
+    }
+  ],
+  "sampleCreatePollData": {
+    "subject": "What's your favorite programming language for blockchain development?",
+    "description": "As blockchain technology evolves, different programming languages are emerging as favorites for smart contract and dApp development. Share your preference and help others understand the current trends in blockchain development.",
+    "category": "Technology",
+    "viewType": "public",
+    "options": [
+      "Solidity",
+      "Rust",
+      "JavaScript/TypeScript",
+      "Go",
+      "Python"
+    ],
+    "rewardPerResponse": "0.001",
+    "durationDays": "7",
+    "maxResponses": "500",
+    "minContribution": "0",
+    "fundingType": "community",
+    "targetFund": "0.5",
+    "isOpenImmediately": true
+  },
+  "appFeatures": [
+    {
+      "title": "Decentralized Polling",
+      "description": "Create and participate in polls secured by blockchain technology",
+      "icon": "🗳️"
+    },
+    {
+      "title": "Earn Rewards",
+      "description": "Get rewarded for participating in community polls",
+      "icon": "💰"
+    },
+    {
+      "title": "Real-time Results",
+      "description": "See live poll results updated on the blockchain",
+      "icon": "📊"
+    },
+    {
+      "title": "Citrea Integration",
+      "description": "Built specifically for the Citrea blockchain ecosystem",
+      "icon": "🔗"
+    },
+    {
+      "title": "Mobile Responsive",
+      "description": "Vote and create polls from any device",
+      "icon": "📱"
+    },
+    {
+      "title": "Transparent Governance",
+      "description": "All voting is transparent and verifiable on-chain",
+      "icon": "🔍"
+    }
+  ]
+}
