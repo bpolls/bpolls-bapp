@@ -12,6 +12,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { ethers } from 'ethers';
 import { CONTRACT_ADDRESSES } from '@/constants/contracts';
 import { POLLS_DAPP_ABI } from '@/constants/abi';
+import { showToast } from '@/lib/toast';
 
 interface CreatePollForm {
   subject: string;
@@ -135,10 +136,10 @@ export function CreatePoll() {
         isOpenImmediately: true,
       });
       
-      alert('Poll created successfully!');
+      showToast.success('Poll created successfully!', 'Your poll has been deployed to the blockchain.');
     } catch (error) {
       console.error('Error creating poll:', error);
-      alert('Failed to create poll. Please try again.');
+      showToast.error('Failed to create poll', 'Please check your wallet and try again.');
     } finally {
       setIsCreating(false);
     }

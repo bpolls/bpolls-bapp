@@ -3,6 +3,7 @@
 import { PollCard } from './PollCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ActivePoll } from '@/types/poll';
+import { showToast } from '@/lib/toast';
 
 const mockPolls: ActivePoll[] = [
   {
@@ -122,7 +123,7 @@ export function MockPollList() {
           <PollCard 
             key={poll.pollId.toString()} 
             poll={poll} 
-            onVote={() => alert('Demo mode: Connect your wallet and configure contracts to vote on real polls!')}
+            onVote={() => showToast.info('Demo Mode', 'Connect your wallet and configure contracts to vote on real polls!')}
           />
         ))}
       </div>
