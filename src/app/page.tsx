@@ -56,8 +56,6 @@ export default function HomePage() {
       <div className="space-y-6">
         {currentView === 'home' && (
           <div className="space-y-8">
-            <DebugPanel />
-            
             {/* Hero Section */}
             <div className="text-center space-y-6 py-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
               <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
