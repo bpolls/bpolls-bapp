@@ -9,14 +9,32 @@ export function usePollsContract() {
   const { data: walletClient } = useWalletClient();
 
   return useMemo(() => {
-    if (!CONTRACT_ADDRESSES.POLLS_DAPP) return null;
+    console.log('Contract address:', CONTRACT_ADDRESSES.POLLS_DAPP);
+    console.log('Public client:', !!publicClient);
+    
+    if (!CONTRACT_ADDRESSES.POLLS_DAPP) {
+      console.error('POLLS_DAPP contract address not configured');
+      return null;
+    }
 
-    return getContract({
-      address: CONTRACT_ADDRESSES.POLLS_DAPP as `0x${string}`,
-      abi: POLLS_DAPP_ABI,
-      publicClient,
-      walletClient: walletClient || undefined,
-    });
+    if (!publicClient) {
+      console.error('Public client not available');
+      return null;
+    }
+
+    try {
+      const contract = getContract({
+        address: CONTRACT_ADDRESSES.POLLS_DAPP as `0x${string}`,
+        abi: POLLS_DAPP_ABI,
+        publicClient,
+        walletClient: walletClient || undefined,
+      });
+      console.log('Contract initialized successfully');
+      return contract;
+    } catch (error) {
+      console.error('Error initializing contract:', error);
+      return null;
+    }
   }, [publicClient, walletClient]);
 }
 

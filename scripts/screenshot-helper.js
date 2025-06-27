@@ -30,6 +30,12 @@ const screenshots = [
     description: 'After connecting wallet, show address in header'
   },
   {
+    name: 'Browse Polls Page',
+    file: 'browse-polls.png',
+    url: 'http://localhost:3001',
+    description: 'Click "Browse & Vote" tab to see all active polls'
+  },
+  {
     name: 'Create Poll Page',
     file: 'create-poll.png',
     url: 'http://localhost:3001',
@@ -45,7 +51,7 @@ const screenshots = [
     name: 'Voting Interface',
     file: 'voting-interface.png',
     url: 'http://localhost:3001',
-    description: 'Click "Vote on this Poll" to show voting options'
+    description: 'Click "Vote on this Poll" from Browse & Vote page'
   },
   {
     name: 'Mobile View',
