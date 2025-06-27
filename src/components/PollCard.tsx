@@ -11,6 +11,7 @@ import { Clock, Users, DollarSign, Vote } from 'lucide-react';
 import { ethers } from 'ethers';
 import { CONTRACT_ADDRESSES } from '@/constants/contracts';
 import { POLLS_DAPP_ABI } from '@/constants/abi';
+import { showToast } from '@/lib/toast';
 
 interface PollCardProps {
   poll: ActivePoll;
@@ -55,10 +56,10 @@ export function PollCard({ poll, onVote }: PollCardProps) {
       setShowVoteForm(false);
       setSelectedOption('');
       onVote?.();
-      alert('Vote submitted successfully!');
+      showToast.success('Vote submitted successfully!', `Your vote for "${selectedOption}" has been recorded.`);
     } catch (error) {
       console.error('Error voting:', error);
-      alert('Failed to submit vote. Please try again.');
+      showToast.error('Failed to submit vote', 'Please check your wallet and try again.');
     } finally {
       setIsVoting(false);
     }
