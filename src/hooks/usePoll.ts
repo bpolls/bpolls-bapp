@@ -11,13 +11,22 @@ export function usePolls() {
 
   useEffect(() => {
     async function fetchPolls() {
-      if (!contract) return;
+      if (!contract) {
+        console.log('No contract available for fetching polls');
+        setError('Contract not initialized. Please check your environment variables.');
+        setLoading(false);
+        return;
+      }
 
       try {
         setLoading(true);
+        setError(null);
+        console.log('Fetching active polls from contract...');
         const activePolls = await contract.read.getActivePolls();
+        console.log('Active polls fetched:', activePolls);
         setPolls(activePolls as ActivePoll[]);
       } catch (err) {
+        console.error('Error fetching polls:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch polls');
       } finally {
         setLoading(false);

@@ -2,6 +2,7 @@
 
 import { usePolls } from '@/hooks/usePoll';
 import { PollCard } from './PollCard';
+import { MockPollList } from './MockPollList';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
@@ -23,6 +24,11 @@ export function PollList() {
   }
 
   if (error) {
+    // If there's a contract error, show mock polls for demo purposes
+    if (error.includes('Contract not initialized') || error.includes('environment variables')) {
+      return <MockPollList />;
+    }
+    
     return (
       <Card>
         <CardHeader>
@@ -30,10 +36,16 @@ export function PollList() {
           <CardDescription>{error}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button onClick={refetch} variant="outline" className="gap-2">
-            <RefreshCw className="w-4 h-4" />
-            Try Again
-          </Button>
+          <div className="space-y-3">
+            <Button onClick={refetch} variant="outline" className="gap-2">
+              <RefreshCw className="w-4 h-4" />
+              Try Again
+            </Button>
+            <p className="text-sm text-muted-foreground">
+              Or view demo polls below:
+            </p>
+            <MockPollList />
+          </div>
         </CardContent>
       </Card>
     );

@@ -45,7 +45,7 @@ Please capture the following screenshots of your BPolls application at `http://l
 - Demonstrate the user-friendly interface
 
 ### 6. Active Polls List - `polls-list.png`
-**URL**: `http://localhost:3001` (Home tab with polls)
+**URL**: `http://localhost:3001` (Click "Browse & Vote" tab)
 **What to show**:
 - Multiple poll cards displayed in a grid
 - Each card showing: title, creator, status, time remaining
