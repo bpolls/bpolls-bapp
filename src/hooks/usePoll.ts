@@ -21,10 +21,54 @@ export function usePolls() {
       try {
         setLoading(true);
         setError(null);
-        console.log('Fetching active polls from contract...');
-        const activePolls = await contract.read.getActivePolls();
-        console.log('Active polls fetched:', activePolls);
-        setPolls(activePolls as ActivePoll[]);
+        console.log('Fetching all poll IDs from contract...');
+        console.log('Contract object:', contract);
+        
+        // Get all poll IDs using ethers
+        const allPollIds = await contract.getAllPollIds();
+        console.log('All poll IDs fetched:', allPollIds);
+        
+        // Fetch individual polls for each ID
+        const allPolls: Poll[] = [];
+        for (const pollId of allPollIds) {
+          try {
+            const pollData = await contract.getPoll(pollId);
+            allPolls.push(pollData);
+          } catch (err) {
+            console.error(`Error fetching poll ${pollId}:`, err);
+          }
+        }
+        
+        // Filter for active polls and transform to ActivePoll format
+        const activePolls: ActivePoll[] = allPolls
+          .filter(poll => poll.isOpen)
+          .map(poll => ({
+            content: {
+              creator: poll.creator,
+              subject: poll.subject,
+              description: poll.description,
+              category: poll.category,
+              status: poll.status,
+              viewType: poll.viewType,
+              options: poll.options,
+              isOpen: poll.isOpen
+            },
+            settings: {
+              rewardPerResponse: poll.rewardPerResponse,
+              maxResponses: poll.maxResponses,
+              durationDays: poll.durationDays,
+              minContribution: poll.minContribution,
+              fundingType: poll.fundingType,
+              targetFund: poll.targetFund,
+              endTime: poll.endTime,
+              funds: poll.funds,
+              rewardToken: poll.rewardToken,
+              rewardDistribution: poll.rewardDistribution
+            }
+          }));
+        
+        console.log('Active polls processed:', activePolls);
+        setPolls(activePolls);
       } catch (err) {
         console.error('Error fetching polls:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch polls');
@@ -56,7 +100,7 @@ export function usePoll(pollId: bigint | undefined) {
 
       try {
         setLoading(true);
-        const pollData = await contract.read.getPoll([pollId]);
+        const pollData = await contract.getPoll(pollId);
         setPoll(pollData as Poll);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch poll');
@@ -83,7 +127,7 @@ export function usePollResponses(pollId: bigint | undefined) {
 
       try {
         setLoading(true);
-        const responseData = await contract.read.getPollResponses([pollId]);
+        const responseData = await contract.getPollResponses(pollId);
         setResponses(responseData as PollResponse[]);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch responses');
@@ -111,7 +155,7 @@ export function useUserPolls() {
 
       try {
         setLoading(true);
-        const userPolls = await contract.read.getUserPolls([address]);
+        const userPolls = await contract.getUserPolls(address);
         setPolls(userPolls as ActivePoll[]);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch user polls');

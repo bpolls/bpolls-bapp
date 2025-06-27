@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { usePublicClient, useWalletClient } from 'wagmi';
-import { getContract } from 'viem';
+import { ethers } from 'ethers';
 import { CONTRACT_ADDRESSES } from '@/constants/contracts';
 import { POLLS_DAPP_ABI, POLL_MANAGER_ABI, FUNDING_MANAGER_ABI, RESPONSE_MANAGER_ABI, TOKEN_MANAGER_ABI } from '@/constants/abi';
+import { getEthersProvider } from '@/lib/wagmi';
 
 export function usePollsContract() {
   const publicClient = usePublicClient();
@@ -23,13 +24,13 @@ export function usePollsContract() {
     }
 
     try {
-      const contract = getContract({
-        address: CONTRACT_ADDRESSES.POLLS_DAPP as `0x${string}`,
-        abi: POLLS_DAPP_ABI,
-        publicClient,
-        walletClient: walletClient || undefined,
-      });
-      console.log('Contract initialized successfully');
+      const provider = getEthersProvider();
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESSES.POLLS_DAPP,
+        POLLS_DAPP_ABI,
+        provider
+      );
+      console.log('Contract initialized successfully with ethers');
       return contract;
     } catch (error) {
       console.error('Error initializing contract:', error);
@@ -45,12 +46,12 @@ export function usePollManagerContract() {
   return useMemo(() => {
     if (!CONTRACT_ADDRESSES.POLL_MANAGER) return null;
 
-    return getContract({
-      address: CONTRACT_ADDRESSES.POLL_MANAGER as `0x${string}`,
-      abi: POLL_MANAGER_ABI,
-      publicClient,
-      walletClient: walletClient || undefined,
-    });
+    const provider = getEthersProvider();
+    return new ethers.Contract(
+      CONTRACT_ADDRESSES.POLL_MANAGER,
+      POLL_MANAGER_ABI,
+      provider
+    );
   }, [publicClient, walletClient]);
 }
 
@@ -61,12 +62,12 @@ export function useFundingManagerContract() {
   return useMemo(() => {
     if (!CONTRACT_ADDRESSES.FUNDING_MANAGER) return null;
 
-    return getContract({
-      address: CONTRACT_ADDRESSES.FUNDING_MANAGER as `0x${string}`,
-      abi: FUNDING_MANAGER_ABI,
-      publicClient,
-      walletClient: walletClient || undefined,
-    });
+    const provider = getEthersProvider();
+    return new ethers.Contract(
+      CONTRACT_ADDRESSES.FUNDING_MANAGER,
+      FUNDING_MANAGER_ABI,
+      provider
+    );
   }, [publicClient, walletClient]);
 }
 
@@ -77,12 +78,12 @@ export function useResponseManagerContract() {
   return useMemo(() => {
     if (!CONTRACT_ADDRESSES.RESPONSE_MANAGER) return null;
 
-    return getContract({
-      address: CONTRACT_ADDRESSES.RESPONSE_MANAGER as `0x${string}`,
-      abi: RESPONSE_MANAGER_ABI,
-      publicClient,
-      walletClient: walletClient || undefined,
-    });
+    const provider = getEthersProvider();
+    return new ethers.Contract(
+      CONTRACT_ADDRESSES.RESPONSE_MANAGER,
+      RESPONSE_MANAGER_ABI,
+      provider
+    );
   }, [publicClient, walletClient]);
 }
 
@@ -93,11 +94,11 @@ export function useTokenManagerContract() {
   return useMemo(() => {
     if (!CONTRACT_ADDRESSES.TOKEN_MANAGER) return null;
 
-    return getContract({
-      address: CONTRACT_ADDRESSES.TOKEN_MANAGER as `0x${string}`,
-      abi: TOKEN_MANAGER_ABI,
-      publicClient,
-      walletClient: walletClient || undefined,
-    });
+    const provider = getEthersProvider();
+    return new ethers.Contract(
+      CONTRACT_ADDRESSES.TOKEN_MANAGER,
+      TOKEN_MANAGER_ABI,
+      provider
+    );
   }, [publicClient, walletClient]);
 }

@@ -12,8 +12,8 @@ export const CITREA_CHAIN_CONFIG = {
   network: 'citrea-testnet',
   nativeCurrency: {
     decimals: 18,
-    name: 'Bitcoin',
-    symbol: 'BTC',
+    name: 'Citrea Bitcoin',
+    symbol: 'cBTC',
   },
   rpcUrls: {
     public: { http: ['https://rpc.testnet.citrea.xyz'] },
