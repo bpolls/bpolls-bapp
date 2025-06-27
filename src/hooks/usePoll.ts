@@ -9,40 +9,47 @@ export function usePolls() {
   const [error, setError] = useState<string | null>(null);
   const contract = usePollsContract();
 
-  useEffect(() => {
-    async function fetchPolls() {
-      if (!contract) {
-        console.log('No contract available for fetching polls');
-        setError('Contract not initialized. Please check your environment variables.');
-        setLoading(false);
-        return;
-      }
+  const fetchPolls = async () => {
+    if (!contract) {
+      console.log('No contract available for fetching polls');
+      setError('Contract not initialized. Please check your environment variables.');
+      setLoading(false);
+      return;
+    }
 
-      try {
-        setLoading(true);
-        setError(null);
-        console.log('Fetching all poll IDs from contract...');
-        console.log('Contract object:', contract);
-        
-        // Get all poll IDs using ethers
-        const allPollIds = await contract.getAllPollIds();
-        console.log('All poll IDs fetched:', allPollIds);
-        
-        // Fetch individual polls for each ID
-        const allPolls: Poll[] = [];
-        for (const pollId of allPollIds) {
-          try {
-            const pollData = await contract.getPoll(pollId);
-            allPolls.push(pollData);
-          } catch (err) {
-            console.error(`Error fetching poll ${pollId}:`, err);
-          }
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('Fetching all poll IDs from contract...');
+      console.log('Contract object:', contract);
+      
+      // Get all poll IDs using ethers
+      const allPollIds = await contract.getAllPollIds();
+      console.log('All poll IDs fetched:', allPollIds);
+      
+      // Fetch individual polls for each ID
+      const allPolls: Poll[] = [];
+      const pollIdMapping: bigint[] = [];
+      for (const pollId of allPollIds) {
+        try {
+          const pollData = await contract.getPoll(pollId);
+          allPolls.push(pollData);
+          pollIdMapping.push(pollId);
+        } catch (err) {
+          console.error(`Error fetching poll ${pollId}:`, err);
         }
-        
-        // Filter for active polls and transform to ActivePoll format
-        const activePolls: ActivePoll[] = allPolls
-          .filter(poll => poll.isOpen)
-          .map(poll => ({
+      }
+      
+      // Filter for active polls and transform to ActivePoll format
+      const activePolls: ActivePoll[] = allPolls
+        .filter((poll, index) => poll.isOpen)
+        .map((poll, index) => {
+          // Find the corresponding poll ID for this active poll
+          const originalIndex = allPolls.indexOf(poll);
+          const pollId = pollIdMapping[originalIndex];
+          
+          return {
+            pollId: pollId,
             content: {
               creator: poll.creator,
               subject: poll.subject,
@@ -63,29 +70,27 @@ export function usePolls() {
               endTime: poll.endTime,
               funds: poll.funds,
               rewardToken: poll.rewardToken,
-              rewardDistribution: poll.rewardDistribution
+              rewardDistribution: poll.rewardDistribution,
+              totalResponses: poll.totalResponses
             }
-          }));
-        
-        console.log('Active polls processed:', activePolls);
-        setPolls(activePolls);
-      } catch (err) {
-        console.error('Error fetching polls:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch polls');
-      } finally {
-        setLoading(false);
-      }
+          };
+        });
+      
+      console.log('Active polls processed:', activePolls);
+      setPolls(activePolls);
+    } catch (err) {
+      console.error('Error fetching polls:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch polls');
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     fetchPolls();
   }, [contract]);
 
-  return { polls, loading, error, refetch: () => {
-    if (contract) {
-      setLoading(true);
-      setError(null);
-    }
-  }};
+  return { polls, loading, error, refetch: fetchPolls };
 }
 
 export function usePoll(pollId: bigint | undefined) {

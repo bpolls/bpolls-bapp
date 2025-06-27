@@ -75,9 +75,9 @@ export function PollList() {
       </div>
       
       <div className="grid gap-6">
-        {polls.map((poll, index) => (
+        {polls.map((poll) => (
           <PollCard 
-            key={`${poll.content.creator}-${index}`} 
+            key={poll.pollId.toString()} 
             poll={poll} 
             onVote={refetch}
           />

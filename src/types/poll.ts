@@ -56,6 +56,7 @@ export interface DonorHistory {
 }
 
 export interface ActivePoll {
+  pollId: bigint;
   content: {
     creator: string;
     subject: string;
@@ -77,5 +78,6 @@ export interface ActivePoll {
     funds: bigint;
     rewardToken: string;
     rewardDistribution: string;
+    totalResponses: bigint;
   };
 }
