@@ -106,5 +106,3 @@ If contracts aren't configured, the app will automatically show demo polls for p
 - **State Management**: TanStack Query
 
 ---
-
-**Ready to take screenshots! Your app now shows demo polls when contracts aren't available. 📸**
