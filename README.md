@@ -105,4 +105,28 @@ If contracts aren't configured, the app will automatically show demo polls for p
 - **Blockchain**: Citrea (EVM-compatible)
 - **State Management**: TanStack Query
 
+## Migration from Next.js to Vite
+
+This project was migrated from Next.js to Vite for a faster, SPA-focused development experience.
+
+### Key Changes
+- Next.js dependencies and scripts removed
+- Vite and plugins added
+- Entry point is now `src/main.tsx`
+- Main app component is currently `src/app/page.tsx` (should be refactored to `App.tsx`)
+- Routing should be migrated to React Router (manual step)
+- SSR/SSG logic must be removed or replaced (manual step)
+
+### Manual Steps Remaining
+- Move page logic from `src/app/page.tsx` to `src/App.tsx`
+- Set up React Router for navigation
+- Remove any Next.js-specific imports or logic
+- Update static asset references if needed
+
+Run the app with:
+
+```
+npm run dev
+```
+
 ---

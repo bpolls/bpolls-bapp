@@ -14,15 +14,9 @@ export const config = createConfig({
   autoConnect: true,
   connectors: [
     new MetaMaskConnector({ chains }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
-      },
-    }),
   ],
   publicClient,
-});
+}) as any;
 
 export { chains };
 

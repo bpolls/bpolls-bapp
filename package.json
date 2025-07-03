@@ -1,28 +1,47 @@
 {
   "name": "bpolls-bapp",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "packageManager": "yarn@3.8.7",
+  "main": "./dist/app/bundle.js",
+  "module": "./dist/app/bundle.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/app/bundle.js",
+      "require": "./dist/app/bundle.cjs.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./index.css": "./dist/app/style.css"
+  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "vite",
+    "build": "VITE_USER_NODE_ENV=build tsc --project tsconfig.build.json && vite build --mode build",
+    "build:demo": "vite build --mode demo",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.36.1",
+    "@babel/runtime": "^7.27.1",
+    "@eslint/compat": "^1.2.0",
+    "@tanstack/react-query": "^5.50.1",
     "@wagmi/connectors": "^3.1.9",
     "@wagmi/core": "^1.4.12",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "ethers": "^6.8.1",
     "lucide-react": "^0.294.0",
-    "next": "14.0.4",
+    "next": "15.2.4",
+    "next-themes": "^0.4.4",
     "pino-pretty": "^13.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^7.6.3",
     "sonner": "^2.0.5",
-    "tailwind-merge": "^2.0.0",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7",
     "viem": "^1.19.9",
     "wagmi": "^1.4.12"
   },
@@ -30,11 +49,44 @@
     "@types/node": "^20.9.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "@types/react-router-dom": "^5.3.3",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.16",
-    "eslint": "^8.54.0",
-    "eslint-config-next": "14.0.4",
+    "eslint": "^9.6.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react": "^7.34.3",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "eslint-plugin-vitest": "^0.5.4",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5",
-    "typescript": "^5.3.2"
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.2.2",
+    "vite": "^6.3.5",
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "vite-tsconfig-paths": "^4.3.2"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.50.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "use-sync-external-store": "^1.2.0",
+    "viem": "2.x",
+    "wagmi": "^2.10.10"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix --config eslint.config.js",
+      "prettier --write --config prettier.config.js"
+    ],
+    "*.{js,jsx,css,md,json,yml}": "prettier --write --config prettier.config.js"
+  },
+  "volta": {
+    "node": "22.4.1",
+    "yarn": "3.8.7"
+  },
+  "engines": {
+    "yarn": ">=3.0.0 <4.0.0"
   }
 }

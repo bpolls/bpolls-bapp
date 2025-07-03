@@ -1,0 +1,6 @@
+{
+  "buildCommand": "bun run build:demo",
+  "outputDirectory": "dist/app",
+  "framework": null,
+  "installCommand": "bun install"
+}
