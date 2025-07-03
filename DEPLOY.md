@@ -3,5 +3,5 @@
 ```bash
 vercel project
 vercel link --yes --project bpolls
-vercel build --prod && vercel --prebuilt --prod
+npm run build && vercel build --prod && vercel --prebuilt --prod
 ```
