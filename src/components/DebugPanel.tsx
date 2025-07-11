@@ -1,13 +1,13 @@
 'use client';
 
-import { useAccount, useNetwork, usePublicClient } from 'wagmi';
+import { useAccount, useChainId, usePublicClient } from 'wagmi';
 import { usePollsContract } from '@/hooks/useContract';
 import { CONTRACT_ADDRESSES } from '@/constants/contracts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function DebugPanel() {
   const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const publicClient = usePublicClient();
   const contract = usePollsContract();
 
@@ -27,8 +27,8 @@ export function DebugPanel() {
           
           <div>
             <h4 className="font-semibold mb-2">Network Status</h4>
-            <p>Chain ID: {chain?.id || 'Unknown'}</p>
-            <p>Chain Name: {chain?.name || 'Unknown'}</p>
+            <p>Chain ID: {chainId || 'Unknown'}</p>
+            <p>Chain Name: {chainId === 5115 ? 'Citrea Testnet' : 'Unknown'}</p>
             <p>Expected: Citrea Testnet (5115)</p>
           </div>
           

@@ -1,6 +1,6 @@
 'use client';
 
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { AlertTriangle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,11 +10,11 @@ import { useState } from 'react';
 
 export function NetworkWarningBanner() {
   const { isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const [isDismissed, setIsDismissed] = useState(false);
 
   // Don't show if not connected, on correct network, or dismissed
-  if (!isConnected || chain?.id === CITREA_CHAIN_CONFIG.id || isDismissed) {
+  if (!isConnected || chainId === CITREA_CHAIN_CONFIG.id || isDismissed) {
     return null;
   }
 
@@ -29,7 +29,7 @@ export function NetworkWarningBanner() {
                 Wrong Network Detected
               </div>
               <div className="text-sm text-yellow-700">
-                You're connected to {chain?.name || 'Unknown Network'}. Please switch to Citrea Testnet to use this app.
+                You're connected to Chain ID {chainId}. Please switch to Citrea Testnet to use this app.
               </div>
             </div>
           </div>

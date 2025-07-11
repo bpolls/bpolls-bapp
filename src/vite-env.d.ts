@@ -6,7 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_FUNDING_MANAGER_ADDRESS_V2: string
   readonly VITE_RESPONSE_MANAGER_ADDRESS_V2: string
   readonly VITE_TOKEN_MANAGER_ADDRESS_V2: string
-  readonly VITE_WALLETCONNECT_PROJECT_ID: string
+  readonly VITE_WALLETCONNECT_PROJECT_ID_V2: string
 }
 
 interface ImportMeta {
