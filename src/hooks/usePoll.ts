@@ -40,9 +40,14 @@ export function usePolls() {
         }
       }
       
-      // Filter for active polls and transform to ActivePoll format
+      // Filter for active polls (open and not ended) and transform to ActivePoll format
+      const now = BigInt(Math.floor(Date.now() / 1000));
       const activePolls: ActivePoll[] = allPolls
-        .filter((poll, index) => poll.isOpen)
+        .filter((poll, index) => {
+          const isTimeValid = poll.endTime > now;
+          const isNotFull = poll.totalResponses < poll.maxResponses;
+          return poll.isOpen && isTimeValid && isNotFull;
+        })
         .map((poll, index) => {
           // Find the corresponding poll ID for this active poll
           const originalIndex = allPolls.indexOf(poll);

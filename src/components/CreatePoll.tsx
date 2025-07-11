@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAccount, useWalletClient } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +33,7 @@ interface CreatePollForm {
 }
 
 export function CreatePoll() {
+  const navigate = useNavigate();
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const contract = usePollsContract();
@@ -42,16 +44,26 @@ export function CreatePoll() {
     category: 'General',
     viewType: 'public',
     options: ['', ''],
-    rewardPerResponse: '0',
+    rewardPerResponse: '0.00001',
     durationDays: '7',
     maxResponses: '100',
-    minContribution: '0',
-    fundingType: 'community',
+    minContribution: '0.00001',
+    fundingType: 'self-funded',
     targetFund: '0',
     rewardToken: '0x0000000000000000000000000000000000000000',
     rewardDistribution: 'equal',
     isOpenImmediately: true,
   });
+
+  // Calculate target fund automatically
+  const calculateTargetFund = () => {
+    const rewardPerResponse = parseFloat(form.rewardPerResponse) || 0;
+    const maxResponses = parseInt(form.maxResponses) || 0;
+    return (rewardPerResponse * maxResponses).toString();
+  };
+
+  // Update target fund whenever reward per response or max responses change
+  const calculatedTargetFund = calculateTargetFund();
 
   const addOption = () => {
     setForm(prev => ({
@@ -80,6 +92,13 @@ export function CreatePoll() {
     e.preventDefault();
     if (!contract || !address || !walletClient) return;
 
+    // Validate minimum contribution
+    const minContribValue = parseFloat(form.minContribution);
+    if (minContribValue <= 0) {
+      showToast.error('Invalid minimum contribution', 'Minimum contribution must be greater than 0');
+      return;
+    }
+
     try {
       setIsCreating(true);
       
@@ -96,12 +115,12 @@ export function CreatePoll() {
         minContribution: parseBigInt(form.minContribution),
         fundingType: form.fundingType,
         isOpenImmediately: form.isOpenImmediately,
-        targetFund: parseBigInt(form.targetFund),
+        targetFund: parseBigInt(calculatedTargetFund),
         rewardToken: form.rewardToken as `0x${string}`,
         rewardDistribution: form.rewardDistribution,
       };
 
-      const value = form.isOpenImmediately ? parseBigInt(form.targetFund) : BigInt(0);
+      const value = form.isOpenImmediately ? parseBigInt(calculatedTargetFund) : BigInt(0);
       
       // Create a signer and contract for write operations
       const provider = new ethers.BrowserProvider(walletClient.transport);
@@ -115,8 +134,27 @@ export function CreatePoll() {
       // Use ethers.js syntax for contract interaction
       const tx = await contractWithSigner.createPoll(pollParams, { value });
       
-      // Wait for transaction confirmation
-      await tx.wait();
+      // Wait for transaction confirmation and get receipt
+      const receipt = await tx.wait();
+      
+      // Extract poll ID from transaction logs/events
+      let pollId: string | null = null;
+      if (receipt && receipt.logs) {
+        // Look for PollCreated event in the logs
+        for (const log of receipt.logs) {
+          try {
+            // Parse the log using the contract interface
+            const parsedLog = contractWithSigner.interface.parseLog(log);
+            if (parsedLog && parsedLog.name === 'PollCreated') {
+              pollId = parsedLog.args.pollId.toString();
+              break;
+            }
+          } catch (e) {
+            // Skip logs that can't be parsed
+            continue;
+          }
+        }
+      }
       
       // Reset form
       setForm({
@@ -125,18 +163,25 @@ export function CreatePoll() {
         category: 'General',
         viewType: 'public',
         options: ['', ''],
-        rewardPerResponse: '0',
+        rewardPerResponse: '0.00001',
         durationDays: '7',
         maxResponses: '100',
-        minContribution: '0',
-        fundingType: 'community',
-        targetFund: '0',
+        minContribution: '0.00001', // Set minimum to 0.001 cBTC
+        fundingType: 'self-funded',
+        targetFund: '0.00001',
         rewardToken: '0x0000000000000000000000000000000000000000',
         rewardDistribution: 'equal',
         isOpenImmediately: true,
       });
       
       showToast.success('Poll created successfully!', 'Your poll has been deployed to the blockchain.');
+      
+      // Navigate to the poll detail page if we got the poll ID
+      if (pollId) {
+        setTimeout(() => {
+          navigate(`/poll/${pollId}`);
+        }, 1500); // Short delay to show the success message
+      }
     } catch (error) {
       console.error('Error creating poll:', error);
       showToast.error('Failed to create poll', 'Please check your wallet and try again.');
@@ -286,15 +331,62 @@ export function CreatePoll() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Target Fund (cBTC)</label>
+              <label className="block text-sm font-medium mb-1">
+                Target Fund (cBTC)
+                <span className="text-xs text-muted-foreground ml-1">Auto-calculated</span>
+              </label>
               <Input
                 type="number"
                 step="0.000000000000000001"
-                value={form.targetFund}
-                onChange={(e) => setForm(prev => ({ ...prev, targetFund: e.target.value }))}
-                min="0"
+                value={calculatedTargetFund}
+                readOnly
+                className="bg-gray-50 text-gray-700 cursor-not-allowed"
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Automatically calculated as: Max Responses × Reward Per Response
+              </p>
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Minimum Contribution (cBTC) *
+              <span className="text-xs text-muted-foreground ml-1">Required by voters to participate</span>
+            </label>
+            <Input
+              type="number"
+              step="0.00001"
+              value={form.minContribution}
+              onChange={(e) => setForm(prev => ({ ...prev, minContribution: e.target.value }))}
+              min="0.00001"
+              required
+              placeholder="0.00001"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Minimum amount voters must contribute to participate (must be greater than 0)
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Funding Type *
+              <span className="text-xs text-muted-foreground ml-1">How will this poll be funded?</span>
+            </label>
+            <select
+              value={form.fundingType}
+              onChange={(e) => setForm(prev => ({ ...prev, fundingType: e.target.value }))}
+              className="w-full px-3 py-2 border border-input rounded-md bg-background"
+              required
+            >
+              <option value="self-funded">Self-funded (You provide all rewards)</option>
+              <option value="crowdfunded">Crowdfunded (Community contributes to rewards)</option>
+              <option value="unfunded">Unfunded (No rewards provided)</option>
+            </select>
+            <p className="text-xs text-muted-foreground mt-1">
+              {form.fundingType === 'self-funded' && 'You will fund the entire reward pool from your wallet'}
+              {form.fundingType === 'crowdfunded' && 'Community members can contribute to the reward pool'}
+              {form.fundingType === 'unfunded' && 'No rewards will be distributed for participation'}
+            </p>
           </div>
 
           <div>

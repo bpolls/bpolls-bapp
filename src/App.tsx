@@ -4,6 +4,7 @@ import { PollList } from '@/components/PollList';
 import { CreatePoll } from '@/components/CreatePoll';
 import { RecentPolls } from '@/components/RecentPolls';
 import { PollDetailsPage } from '@/components/PollDetailsPage';
+import { PollResultsPage } from '@/components/PollResultsPage';
 import { AdminPanel } from '@/components/admin/AdminPanel';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Home, Vote, Shield } from 'lucide-react';
@@ -153,6 +154,7 @@ console.log("App");
             <Route path="/create" element={<CreatePollPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/poll/:pollId" element={<PollDetailsPage />} />
+            <Route path="/poll/:pollId/results" element={<PollResultsPage />} />
           </Routes>
           {/* Footer */}
           <footer className="border-t pt-8 mt-16">

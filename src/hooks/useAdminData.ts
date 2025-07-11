@@ -86,9 +86,18 @@ export function useCreatorStats() {
       }
 
       // Calculate stats
-      const openPolls = creatorPolls.filter(p => p.content.isOpen).length;
+      const now = BigInt(Math.floor(Date.now() / 1000));
+      const openPolls = creatorPolls.filter(p => {
+        const isTimeValid = p.settings.endTime > now;
+        const isNotFull = p.settings.totalResponses < p.settings.maxResponses;
+        return p.content.isOpen && isTimeValid && isNotFull;
+      }).length;
       const fundingPolls = creatorPolls.filter(p => p.content.status === 'funding').length;
-      const closedPolls = creatorPolls.filter(p => !p.content.isOpen).length;
+      const closedPolls = creatorPolls.filter(p => {
+        const isTimeExpired = p.settings.endTime <= now;
+        const isFull = p.settings.totalResponses >= p.settings.maxResponses;
+        return !p.content.isOpen || isTimeExpired || isFull;
+      }).length;
       const totalFunding = creatorPolls.reduce((sum, p) => sum + p.settings.funds, BigInt(0));
       const totalResponses = creatorPolls.reduce((sum, p) => sum + Number(p.settings.totalResponses), 0);
 
@@ -203,6 +212,12 @@ export function useAdminPolls() {
           const pollData = await contract.getPoll(pollId);
           const canManage = address && pollData.creator.toLowerCase() === address.toLowerCase();
           
+          // Determine actual poll status based on time and responses
+          const now = BigInt(Math.floor(Date.now() / 1000));
+          const isTimeExpired = pollData.endTime <= now;
+          const isFull = pollData.totalResponses >= pollData.maxResponses;
+          const actualStatus = isTimeExpired || isFull ? 'ended' : pollData.status;
+          
           adminPolls.push({
             pollId,
             content: {
@@ -210,10 +225,10 @@ export function useAdminPolls() {
               subject: pollData.subject,
               description: pollData.description,
               category: pollData.category,
-              status: pollData.status,
+              status: actualStatus,
               viewType: pollData.viewType,
               options: pollData.options,
-              isOpen: pollData.isOpen
+              isOpen: pollData.isOpen && !isTimeExpired && !isFull
             },
             settings: {
               rewardPerResponse: pollData.rewardPerResponse,

@@ -23,6 +23,7 @@ export function PollAdministration() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+  const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>({});
 
   const filteredPolls = polls.filter(poll => {
     const matchesSearch = poll.content.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -70,6 +71,11 @@ export function PollAdministration() {
       await tx.wait();
       
       showToast.success('Status updated successfully', `Poll ${pollId} is now ${newStatus}`);
+      // Clear the status update for this poll after successful submission
+      setStatusUpdates(prev => {
+        const { [pollId.toString()]: _, ...rest } = prev;
+        return rest;
+      });
       refetch();
     } catch (error) {
       console.error('Error updating poll status:', error);
@@ -196,10 +202,10 @@ export function PollAdministration() {
                     <CardTitle className="text-lg">{poll.content.subject}</CardTitle>
                     <CardDescription className="mt-1">
                       Created by {formatAddress(poll.content.creator)}
-                      {poll.canManage && (
-                        <Badge variant="outline" className="ml-2">You can manage</Badge>
-                      )}
                     </CardDescription>
+                    {poll.canManage && (
+                      <Badge variant="outline" className="mt-2">You can manage</Badge>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge className={getStatusColor(poll.content.status, poll.content.isOpen)}>
@@ -242,28 +248,50 @@ export function PollAdministration() {
                   </div>
 
                   {/* Status Management */}
-                  {poll.canManage && (
+                  {poll.canManage && poll.content.status !== 'ended' && poll.content.isOpen && (
                     <div className="border-t pt-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Manage Status:</span>
-                        <div className="flex gap-2">
-                          {['open', 'funding', 'claiming', 'closed'].map((status) => (
-                            <Button
-                              key={status}
-                              size="sm"
-                              variant={poll.content.status === status ? 'default' : 'outline'}
-                              disabled={updatingStatus === poll.pollId.toString() || poll.content.status === status}
-                              onClick={() => handleStatusChange(poll.pollId, status)}
-                              className="capitalize"
-                            >
-                              {updatingStatus === poll.pollId.toString() ? (
-                                <div className="w-4 h-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
-                              ) : (
-                                status
-                              )}
-                            </Button>
-                          ))}
+                      <div className="flex items-center justify-between gap-4">
+                        <span className="text-sm font-medium">Change Status:</span>
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={statusUpdates[poll.pollId.toString()] || poll.content.status}
+                            onChange={(e) => setStatusUpdates(prev => ({
+                              ...prev,
+                              [poll.pollId.toString()]: e.target.value
+                            }))}
+                            disabled={updatingStatus === poll.pollId.toString()}
+                            className="px-3 py-1 border border-input rounded-md bg-background text-sm"
+                          >
+                            <option value="open">Open</option>
+                            <option value="funding">Funding</option>
+                            <option value="claiming">Claiming</option>
+                            <option value="closed">Closed</option>
+                          </select>
+                          <Button
+                            size="sm"
+                            disabled={
+                              updatingStatus === poll.pollId.toString() ||
+                              (statusUpdates[poll.pollId.toString()] || poll.content.status) === poll.content.status
+                            }
+                            onClick={() => handleStatusChange(
+                              poll.pollId, 
+                              statusUpdates[poll.pollId.toString()] || poll.content.status
+                            )}
+                          >
+                            {updatingStatus === poll.pollId.toString() ? (
+                              <div className="w-4 h-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+                            ) : (
+                              'Submit'
+                            )}
+                          </Button>
                         </div>
+                      </div>
+                    </div>
+                  )}
+                  {poll.canManage && (poll.content.status === 'ended' || !poll.content.isOpen) && (
+                    <div className="border-t pt-4">
+                      <div className="flex items-center justify-center">
+                        <span className="text-sm text-muted-foreground">This poll has ended and cannot be modified</span>
                       </div>
                     </div>
                   )}
