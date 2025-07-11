@@ -111,7 +111,8 @@ function AdminPage() {
 }
 
 export default function App() {
-console.log("App");
+  console.log("App");
+  console.log("VITE_DEBUG_MODE", import.meta.env.VITE_DEBUG_MODE);
   return (
     <Providers>
       <BrowserRouter>
