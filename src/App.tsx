@@ -4,8 +4,10 @@ import { PollList } from '@/components/PollList';
 import { CreatePoll } from '@/components/CreatePoll';
 import { RecentPolls } from '@/components/RecentPolls';
 import { PollDetailsPage } from '@/components/PollDetailsPage';
+import { PollResultsPage } from '@/components/PollResultsPage';
+import { AdminPanel } from '@/components/admin/AdminPanel';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Home, Vote } from 'lucide-react';
+import { PlusCircle, Home, Vote, Shield } from 'lucide-react';
 import { Providers } from './app/providers';
 
 function HomePage() {
@@ -102,6 +104,10 @@ function CreatePollPage() {
   );
 }
 
+function AdminPage() {
+  return <AdminPanel />;
+}
+
 export default function App() {
 console.log("App");
   return (
@@ -135,13 +141,20 @@ console.log("App");
                 <PlusCircle className="w-4 h-4" /> Create Poll
               </Link>
             </Button>
+            <Button asChild variant="ghost">
+              <Link to="/admin" className="flex items-center gap-2">
+                <Shield className="w-4 h-4" /> Admin Panel
+              </Link>
+            </Button>
           </nav>
           {/* Content */}
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/browse" element={<BrowsePage />} />
             <Route path="/create" element={<CreatePollPage />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="/poll/:pollId" element={<PollDetailsPage />} />
+            <Route path="/poll/:pollId/results" element={<PollResultsPage />} />
           </Routes>
           {/* Footer */}
           <footer className="border-t pt-8 mt-16">

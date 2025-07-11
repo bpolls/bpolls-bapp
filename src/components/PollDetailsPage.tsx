@@ -51,10 +51,10 @@ export function PollDetailsPage() {
       setSelectedOption('');
       showToast.success('Vote submitted successfully!', `Your vote for "${selectedOption}" has been recorded.`);
       
-      // Navigate back to browse page after successful vote
+      // Navigate to poll results page after successful vote
       setTimeout(() => {
-        navigate('/browse');
-      }, 2000);
+        navigate(`/poll/${pollId}/results`);
+      }, 1500);
     } catch (error) {
       console.error('Error voting:', error);
       showToast.error('Failed to submit vote', 'Please check your wallet and try again.');
@@ -133,9 +133,12 @@ export function PollDetailsPage() {
     );
   }
 
-  const isActive = poll.isOpen && poll.totalResponses < poll.maxResponses;
+  const now = BigInt(Math.floor(Date.now() / 1000));
+  const isTimeExpired = poll.endTime <= now;
+  const isMaxResponsesReached = poll.totalResponses >= poll.maxResponses;
+  const isActive = poll.isOpen && !isTimeExpired && !isMaxResponsesReached;
   const timeRemaining = formatTimeRemaining(poll.endTime);
-  const isEnded = timeRemaining === 'Poll has ended';
+  const isEnded = isTimeExpired || !poll.isOpen;
 
   return (
     <div className="space-y-6">
@@ -258,16 +261,34 @@ export function PollDetailsPage() {
             )}
 
             {/* Voting Section */}
-            {isActive && address ? (
+            {address ? (
               <div className="border-t pt-6">
                 <div className="space-y-4">
-                  {poll.totalResponses >= poll.maxResponses ? (
+                  {isEnded ? (
+                    <div className="text-center py-6">
+                      <p className="text-muted-foreground mb-4">
+                        This poll has ended and is no longer accepting responses
+                      </p>
+                      <Button disabled variant="outline" className="w-full">
+                        Poll Ended
+                      </Button>
+                    </div>
+                  ) : isMaxResponsesReached ? (
                     <div className="text-center py-6">
                       <p className="text-muted-foreground mb-4">
                         This poll has reached the maximum number of responses ({poll.maxResponses.toString()})
                       </p>
                       <Button disabled variant="outline" className="w-full">
                         Poll Full
+                      </Button>
+                    </div>
+                  ) : !isActive ? (
+                    <div className="text-center py-6">
+                      <p className="text-muted-foreground mb-4">
+                        This poll is currently closed
+                      </p>
+                      <Button disabled variant="outline" className="w-full">
+                        Poll Closed
                       </Button>
                     </div>
                   ) : (
@@ -282,7 +303,7 @@ export function PollDetailsPage() {
                       
                       <Button
                         onClick={handleVote}
-                        disabled={isVoting || !selectedOption}
+                        disabled={isVoting || !selectedOption || !isActive}
                         className="w-full"
                         size="lg"
                       >
@@ -292,19 +313,11 @@ export function PollDetailsPage() {
                   )}
                 </div>
               </div>
-            ) : !address ? (
-              <div className="border-t pt-6">
-                <div className="text-center py-6">
-                  <p className="text-muted-foreground mb-4">
-                    Connect your wallet to participate in this poll
-                  </p>
-                </div>
-              </div>
             ) : (
               <div className="border-t pt-6">
                 <div className="text-center py-6">
                   <p className="text-muted-foreground mb-4">
-                    This poll is no longer accepting responses
+                    Connect your wallet to participate in this poll
                   </p>
                 </div>
               </div>
