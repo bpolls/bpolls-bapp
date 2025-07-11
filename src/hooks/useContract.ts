@@ -14,7 +14,7 @@ export function usePollsContract() {
       address: CONTRACT_ADDRESSES.POLLS_DAPP,
       publicClient: !!publicClient,
       walletClient: !!walletClient,
-      envVar: import.meta.env.VITE_POLLS_DAPP_ADDRESS
+      envVar: import.meta.env.VITE_POLLS_DAPP_ADDRESS_V2
     });
     
     if (!CONTRACT_ADDRESSES.POLLS_DAPP) {

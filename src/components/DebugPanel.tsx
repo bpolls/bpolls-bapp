@@ -48,11 +48,11 @@ export function DebugPanel() {
         <div>
           <h4 className="font-semibold mb-2">Environment Variables</h4>
           <div className="space-y-1 text-xs font-mono bg-gray-100 p-3 rounded">
-            <p>VITE_POLLS_DAPP_ADDRESS: {import.meta.env.VITE_POLLS_DAPP_ADDRESS ? '✅ Set' : '❌ Missing'}</p>
-            <p>VITE_POLL_MANAGER_ADDRESS: {import.meta.env.VITE_POLL_MANAGER_ADDRESS ? '✅ Set' : '❌ Missing'}</p>
-            <p>VITE_FUNDING_MANAGER_ADDRESS: {import.meta.env.VITE_FUNDING_MANAGER_ADDRESS ? '✅ Set' : '❌ Missing'}</p>
-            <p>VITE_RESPONSE_MANAGER_ADDRESS: {import.meta.env.VITE_RESPONSE_MANAGER_ADDRESS ? '✅ Set' : '❌ Missing'}</p>
-            <p>VITE_TOKEN_MANAGER_ADDRESS: {import.meta.env.VITE_TOKEN_MANAGER_ADDRESS ? '✅ Set' : '❌ Missing'}</p>
+            <p>VITE_POLLS_DAPP_ADDRESS: {import.meta.env.VITE_POLLS_DAPP_ADDRESS_V2 ? '✅ Set' : '❌ Missing'}</p>
+            <p>VITE_POLL_MANAGER_ADDRESS: {import.meta.env.VITE_POLL_MANAGER_ADDRESS_V2 ? '✅ Set' : '❌ Missing'}</p>
+            <p>VITE_FUNDING_MANAGER_ADDRESS: {import.meta.env.VITE_FUNDING_MANAGER_ADDRESS_V2 ? '✅ Set' : '❌ Missing'}</p>
+            <p>VITE_RESPONSE_MANAGER_ADDRESS: {import.meta.env.VITE_RESPONSE_MANAGER_ADDRESS_V2  ? '✅ Set' : '❌ Missing'}</p>
+            <p>VITE_TOKEN_MANAGER_ADDRESS: {import.meta.env.VITE_TOKEN_MANAGER_ADDRESS_V2 ? '✅ Set' : '❌ Missing'}</p>
           </div>
         </div>
         
