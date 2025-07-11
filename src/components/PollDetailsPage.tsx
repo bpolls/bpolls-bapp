@@ -12,6 +12,8 @@ import { ethers } from 'ethers';
 import { CONTRACT_ADDRESSES } from '@/constants/contracts';
 import { POLLS_DAPP_ABI } from '@/constants/abi';
 import { showToast } from '@/lib/toast';
+import { useNetworkValidation } from '@/hooks/useNetworkValidation';
+import { useUserVoteStatus } from '@/hooks/useUserVoteStatus';
 
 export function PollDetailsPage() {
   const { pollId } = useParams();
@@ -19,12 +21,23 @@ export function PollDetailsPage() {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { poll, loading, error } = usePoll(pollId ? BigInt(pollId) : undefined);
+  const { validateNetwork, isCorrectNetwork } = useNetworkValidation();
+  const { hasVoted, userResponse, markAsVoted } = useUserVoteStatus(pollId ? BigInt(pollId) : undefined);
   
   const [isVoting, setIsVoting] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string>('');
 
+  const handleViewResults = () => {
+    navigate(`/poll/${pollId}/results`);
+  };
+
   const handleVote = async () => {
     if (!address || !selectedOption || !walletClient || !poll || !pollId) return;
+
+    // Validate network before proceeding
+    if (!validateNetwork()) {
+      return;
+    }
 
     try {
       setIsVoting(true);
@@ -47,6 +60,9 @@ export function PollDetailsPage() {
       
       // Wait for transaction confirmation
       await tx.wait();
+      
+      // Mark user as voted with their response
+      markAsVoted(selectedOption);
       
       setSelectedOption('');
       showToast.success('Vote submitted successfully!', `Your vote for "${selectedOption}" has been recorded.`);
@@ -238,24 +254,43 @@ export function PollDetailsPage() {
               <div>
                 <h4 className="font-medium mb-4">Poll Options</h4>
                 <div className="space-y-3">
-                  {poll.options.map((option, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
-                      {isActive && address ? (
-                        <input
-                          type="radio"
-                          name="pollOption"
-                          value={option}
-                          checked={selectedOption === option}
-                          onChange={(e) => setSelectedOption(e.target.value)}
-                          className="w-4 h-4"
-                          disabled={isVoting}
-                        />
-                      ) : (
-                        <div className="w-4 h-4 rounded-full border-2 border-gray-300" />
-                      )}
-                      <span className="text-sm font-medium">{option}</span>
-                    </div>
-                  ))}
+                  {poll.options.map((option, index) => {
+                    const isUserVote = hasVoted && userResponse === option;
+                    const canVote = isActive && address && !hasVoted;
+                    
+                    return (
+                      <div 
+                        key={index} 
+                        className={`flex items-center gap-3 p-3 border rounded-lg ${
+                          isUserVote ? 'bg-green-50 border-green-200' : ''
+                        }`}
+                      >
+                        {canVote ? (
+                          <input
+                            type="radio"
+                            name="pollOption"
+                            value={option}
+                            checked={selectedOption === option}
+                            onChange={(e) => setSelectedOption(e.target.value)}
+                            className="w-4 h-4"
+                            disabled={isVoting}
+                          />
+                        ) : isUserVote ? (
+                          <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
+                            <div className="w-2 h-2 rounded-full bg-white" />
+                          </div>
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border-2 border-gray-300" />
+                        )}
+                        <span className={`text-sm font-medium ${
+                          isUserVote ? 'text-green-800' : ''
+                        }`}>
+                          {option}
+                          {isUserVote && <span className="ml-2 text-xs text-green-600">✓ Your vote</span>}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -287,8 +322,18 @@ export function PollDetailsPage() {
                       <p className="text-muted-foreground mb-4">
                         This poll is currently closed
                       </p>
-                      <Button disabled variant="outline" className="w-full">
-                        Poll Closed
+                      <Button onClick={handleViewResults} variant="outline" className="w-full">
+                        View Results
+                      </Button>
+                    </div>
+                  ) : hasVoted ? (
+                    <div className="text-center py-6">
+                      <div className="p-4 bg-green-50 border border-green-200 rounded-lg mb-4">
+                        <p className="text-green-800 font-medium mb-2">✓ You have already voted on this poll</p>
+                        <p className="text-sm text-green-700">Your vote: <strong>{userResponse}</strong></p>
+                      </div>
+                      <Button onClick={handleViewResults} className="w-full" size="lg">
+                        View Results
                       </Button>
                     </div>
                   ) : (
@@ -303,12 +348,20 @@ export function PollDetailsPage() {
                       
                       <Button
                         onClick={handleVote}
-                        disabled={isVoting || !selectedOption || !isActive}
+                        disabled={isVoting || !selectedOption || !isActive || !isCorrectNetwork}
                         className="w-full"
                         size="lg"
                       >
-                        {isVoting ? 'Submitting Vote...' : 'Submit Vote'}
+                        {isVoting ? 'Submitting Vote...' : 
+                         !isCorrectNetwork ? 'Wrong Network' : 'Submit Vote'}
                       </Button>
+                      {!isCorrectNetwork && (
+                        <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                          <p className="text-sm text-yellow-800">
+                            Please switch to Citrea Testnet to vote on this poll
+                          </p>
+                        </div>
+                      )}
                     </>
                   )}
                 </div>

@@ -1,7 +1,6 @@
 import { configureChains, createConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { CITREA_CHAIN_CONFIG } from '@/constants/contracts';
 import { ethers } from 'ethers';
 
@@ -11,9 +10,15 @@ const { chains, publicClient } = configureChains(
 );
 
 export const config = createConfig({
-  autoConnect: true,
+  autoConnect: false,  // Disable auto-connect to force signature prompt
   connectors: [
-    new MetaMaskConnector({ chains }),
+    new MetaMaskConnector({ 
+      chains,
+      options: {
+        shimDisconnect: true,  // Properly handle disconnect
+        UNSTABLE_shimOnConnectSelectAccount: true,  // Force account selection
+      }
+    }),
   ],
   publicClient,
 }) as any;

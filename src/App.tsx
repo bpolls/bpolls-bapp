@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { WalletConnect } from '@/components/WalletConnect';
+import { NetworkWarningBanner } from '@/components/NetworkWarningBanner';
 import { PollList } from '@/components/PollList';
 import { CreatePoll } from '@/components/CreatePoll';
 import { RecentPolls } from '@/components/RecentPolls';
@@ -120,7 +121,7 @@ console.log("App");
               <h1 className="text-3xl font-bold">BPolls</h1>
               <p className="text-muted-foreground">Decentralized Polling on Citrea</p>
             </div>
-            <div className="self-end sm:self-auto">
+            <div className="self-end sm:self-auto flex flex-col gap-2">
               <WalletConnect />
             </div>
           </header>
@@ -147,6 +148,10 @@ console.log("App");
               </Link>
             </Button>
           </nav>
+          
+          {/* Network Warning Banner */}
+          <NetworkWarningBanner />
+          
           {/* Content */}
           <Routes>
             <Route path="/" element={<HomePage />} />
