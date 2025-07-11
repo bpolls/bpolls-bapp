@@ -2,5 +2,11 @@
   "buildCommand": "bun run build:demo",
   "outputDirectory": "dist/app",
   "framework": null,
-  "installCommand": "bun install"
+  "installCommand": "bun install",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
