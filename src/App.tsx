@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-do
 import { WalletConnect } from '@/components/WalletConnect';
 import { PollList } from '@/components/PollList';
 import { CreatePoll } from '@/components/CreatePoll';
+import { RecentPolls } from '@/components/RecentPolls';
+import { PollDetailsPage } from '@/components/PollDetailsPage';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Home, Vote } from 'lucide-react';
 import { Providers } from './app/providers';
@@ -41,7 +43,7 @@ function HomePage() {
         <div className="text-center p-6 border rounded-lg">
           <div className="text-3xl mb-3">💰</div>
           <h3 className="font-semibold mb-2">Earn Rewards</h3>
-          <p className="text-sm text-muted-foreground">Get paid in BTC for participating in community governance</p>
+          <p className="text-sm text-muted-foreground">Get paid in cBTC for participating in community governance</p>
         </div>
         <div className="text-center p-6 border rounded-lg">
           <div className="text-3xl mb-3">⚡</div>
@@ -58,15 +60,21 @@ function HomePage() {
             View All Polls
           </Button>
         </div>
-        <div className="text-muted-foreground text-sm">
+        <div className="text-muted-foreground text-sm mb-4">
           Quick preview of the latest community polls
         </div>
+        <RecentPolls 
+          limit={3}
+          onViewAllPolls={() => navigate('/browse')}
+          onViewPoll={(pollId) => navigate(`/poll/${pollId}`)}
+        />
       </div>
     </div>
   );
 }
 
 function BrowsePage() {
+  const navigate = useNavigate();
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4 py-6">
@@ -75,7 +83,7 @@ function BrowsePage() {
           Participate in community governance and earn rewards by voting on active polls
         </p>
       </div>
-      <PollList />
+      <PollList onViewPoll={(pollId) => navigate(`/poll/${pollId}`)} />
     </div>
   );
 }
@@ -101,12 +109,14 @@ console.log("App");
       <BrowserRouter>
         <div className="container mx-auto px-4 md:px-8 pt-8 pb-8 space-y-8">
           {/* Header */}
-          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
+          <header className="flex flex-col sm:flex-row justify-between items-end sm:items-center gap-4">
+            <div className="flex-1 self-start sm:flex-none">
               <h1 className="text-3xl font-bold">BPolls</h1>
               <p className="text-muted-foreground">Decentralized Polling on Citrea</p>
             </div>
-            <WalletConnect />
+            <div className="self-end sm:self-auto">
+              <WalletConnect />
+            </div>
           </header>
           {/* Navigation */}
           <nav className="flex justify-center gap-2 border-b bg-white rounded-lg shadow-sm py-2 my-2">
@@ -131,6 +141,7 @@ console.log("App");
             <Route path="/" element={<HomePage />} />
             <Route path="/browse" element={<BrowsePage />} />
             <Route path="/create" element={<CreatePollPage />} />
+            <Route path="/poll/:pollId" element={<PollDetailsPage />} />
           </Routes>
           {/* Footer */}
           <footer className="border-t pt-8 mt-16">

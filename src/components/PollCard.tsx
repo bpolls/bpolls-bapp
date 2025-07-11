@@ -1,69 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { useAccount, useWalletClient } from 'wagmi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ActivePoll } from '@/types/poll';
 import { formatAddress, formatBigInt } from '@/lib/utils';
-import { usePollsContract } from '@/hooks/useContract';
 import { Clock, Users, DollarSign, Vote } from 'lucide-react';
-import { ethers } from 'ethers';
-import { CONTRACT_ADDRESSES } from '@/constants/contracts';
-import { POLLS_DAPP_ABI } from '@/constants/abi';
-import { showToast } from '@/lib/toast';
 
 interface PollCardProps {
   poll: ActivePoll;
   onVote?: () => void;
+  onViewPoll?: (pollId: bigint) => void;
 }
 
-export function PollCard({ poll, onVote }: PollCardProps) {
-  const { address } = useAccount();
-  const { data: walletClient } = useWalletClient();
-  const contract = usePollsContract();
-  const [isVoting, setIsVoting] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string>('');
-  const [showVoteForm, setShowVoteForm] = useState(false);
-
-  const handleVote = async () => {
-    if (!address || !selectedOption || !walletClient) return;
-
-    try {
-      setIsVoting(true);
-      
-      const pollId = poll.pollId; // Use the poll ID from the poll prop
-      
-      const minContribution = poll.settings.minContribution;
-      
-      // Create a signer and contract for write operations
-      const provider = new ethers.BrowserProvider(walletClient.transport);
-      const signer = await provider.getSigner();
-      const contractWithSigner = new ethers.Contract(
-        CONTRACT_ADDRESSES.POLLS_DAPP,
-        POLLS_DAPP_ABI,
-        signer
-      );
-      
-      // Use ethers.js syntax for contract interaction
-      const tx = await contractWithSigner.submitResponse(pollId, selectedOption, { 
-        value: minContribution 
-      });
-      
-      // Wait for transaction confirmation
-      await tx.wait();
-      
-      setShowVoteForm(false);
-      setSelectedOption('');
-      onVote?.();
-      showToast.success('Vote submitted successfully!', `Your vote for "${selectedOption}" has been recorded.`);
-    } catch (error) {
-      console.error('Error voting:', error);
-      showToast.error('Failed to submit vote', 'Please check your wallet and try again.');
-    } finally {
-      setIsVoting(false);
-    }
-  };
+export function PollCard({ poll, onVote, onViewPoll }: PollCardProps) {
 
   const formatTimeRemaining = (endTime: bigint) => {
     const now = BigInt(Math.floor(Date.now() / 1000));
@@ -128,12 +77,12 @@ export function PollCard({ poll, onVote }: PollCardProps) {
             
             <div className="flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-muted-foreground" />
-              <span>{formatBigInt(poll.settings.rewardPerResponse)} BTC</span>
+              <span>{formatBigInt(poll.settings.rewardPerResponse)} cBTC</span>
             </div>
             
             <div className="flex items-center gap-2">
               <Vote className="w-4 h-4 text-muted-foreground" />
-              <span>{formatBigInt(poll.settings.funds)} BTC funded</span>
+              <span>{formatBigInt(poll.settings.funds)} cBTC funded</span>
             </div>
           </div>
 
@@ -150,82 +99,15 @@ export function PollCard({ poll, onVote }: PollCardProps) {
             </div>
           )}
 
-          {poll.content.isOpen && address && (
-            <div className="border-t pt-4">
-              {!showVoteForm ? (
-                <div className="space-y-2">
-                  {poll.settings.totalResponses >= poll.settings.maxResponses ? (
-                    <div className="text-center py-4">
-                      <p className="text-sm text-muted-foreground mb-2">
-                        This poll has reached the maximum number of responses ({poll.settings.maxResponses.toString()})
-                      </p>
-                      <Button 
-                        disabled
-                        className="w-full"
-                        variant="outline"
-                      >
-                        Poll Full
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button 
-                      onClick={() => setShowVoteForm(true)}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      Vote on this Poll
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Choose your option:</label>
-                    <div className="space-y-2">
-                      {poll.content.options.map((option, index) => (
-                        <label key={index} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="pollOption"
-                            value={option}
-                            checked={selectedOption === option}
-                            onChange={(e) => setSelectedOption(e.target.value)}
-                            className="w-4 h-4"
-                          />
-                          <span className="text-sm">{option}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {poll.settings.minContribution > 0 && (
-                    <p className="text-xs text-muted-foreground">
-                      Minimum contribution: {formatBigInt(poll.settings.minContribution)} BTC
-                    </p>
-                  )}
-                  
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={handleVote}
-                      disabled={isVoting || !selectedOption}
-                      className="flex-1"
-                    >
-                      {isVoting ? 'Submitting...' : 'Submit Vote'}
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setShowVoteForm(false);
-                        setSelectedOption('');
-                      }}
-                      variant="outline"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          <div className="border-t pt-4">
+            <Button 
+              onClick={() => onViewPoll?.(poll.pollId)}
+              className="w-full"
+              variant="outline"
+            >
+              View Poll Details
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

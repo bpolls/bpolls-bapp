@@ -275,7 +275,7 @@ export function CreatePoll() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Reward Per Response (BTC)</label>
+              <label className="block text-sm font-medium mb-1">Reward Per Response (cBTC)</label>
               <Input
                 type="number"
                 step="0.000000000000000001"
@@ -286,7 +286,7 @@ export function CreatePoll() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Target Fund (BTC)</label>
+              <label className="block text-sm font-medium mb-1">Target Fund (cBTC)</label>
               <Input
                 type="number"
                 step="0.000000000000000001"

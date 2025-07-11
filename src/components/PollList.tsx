@@ -7,7 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
 
-export function PollList() {
+interface PollListProps {
+  onViewPoll?: (pollId: bigint) => void;
+}
+
+export function PollList({ onViewPoll }: PollListProps) {
   const { polls, loading, error, refetch } = usePolls();
 
   if (loading) {
@@ -80,6 +84,7 @@ export function PollList() {
             key={poll.pollId.toString()} 
             poll={poll} 
             onVote={refetch}
+            onViewPoll={onViewPoll}
           />
         ))}
       </div>

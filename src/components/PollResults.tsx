@@ -110,7 +110,7 @@ export function PollResults({ pollId }: PollResultsProps) {
               
               <div className="flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-muted-foreground" />
-                <span>{formatBigInt(poll.funds)} BTC total funds</span>
+                <span>{formatBigInt(poll.funds)} cBTC total funds</span>
               </div>
             </div>
           </div>
@@ -191,7 +191,7 @@ export function PollResults({ pollId }: PollResultsProps) {
                       </span>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {formatBigInt(response.reward)} BTC reward
+                      {formatBigInt(response.reward)} cBTC reward
                     </div>
                   </div>
                 ))}
