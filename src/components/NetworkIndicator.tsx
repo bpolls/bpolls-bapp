@@ -1,12 +1,12 @@
 'use client';
 
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { AlertTriangle, CheckCircle, Globe } from 'lucide-react';
 import { CITREA_CHAIN_CONFIG } from '@/constants/contracts';
 
 export function NetworkIndicator() {
   const { isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
 
   if (!isConnected) {
     return (
@@ -17,7 +17,7 @@ export function NetworkIndicator() {
     );
   }
 
-  const isCorrectNetwork = chain?.id === CITREA_CHAIN_CONFIG.id;
+  const isCorrectNetwork = chainId === CITREA_CHAIN_CONFIG.id;
 
   return (
     <div className={`flex items-center gap-2 text-sm ${
@@ -33,7 +33,7 @@ export function NetworkIndicator() {
       <span>
         {isCorrectNetwork 
           ? 'Citrea Testnet' 
-          : `Wrong Network (${chain?.id || 'Unknown'})`
+          : `Wrong Network (${chainId || 'Unknown'})`
         }
       </span>
     </div>

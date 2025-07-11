@@ -1,12 +1,12 @@
 'use client';
 
-import { useAccount, useConnect, useNetwork } from 'wagmi';
+import { useAccount, useConnect, useChainId } from 'wagmi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function DebugWallet() {
   const { address, isConnected, isConnecting, isDisconnected } = useAccount();
-  const { connectors, isLoading, pendingConnector } = useConnect();
-  const { chain } = useNetwork();
+  const { connectors, isPending, variables } = useConnect();
+  const chainId = useChainId();
 
   // Only show in development
   if (process.env.NODE_ENV === 'production') {
@@ -25,7 +25,7 @@ export function DebugWallet() {
             <li>isConnected: {isConnected.toString()}</li>
             <li>isConnecting: {isConnecting.toString()}</li>
             <li>isDisconnected: {isDisconnected.toString()}</li>
-            <li>isLoading: {isLoading.toString()}</li>
+            <li>isPending: {isPending.toString()}</li>
           </ul>
         </div>
         
@@ -39,17 +39,17 @@ export function DebugWallet() {
         <div>
           <strong>Network:</strong>
           <div className="ml-4">
-            {chain ? `${chain.name} (${chain.id})` : 'None'}
+            {chainId ? `Chain ID: ${chainId}` : 'None'}
           </div>
         </div>
 
         <div>
           <strong>Connectors:</strong>
           <ul className="ml-4">
-            {connectors.map((connector) => (
-              <li key={connector.id}>
+            {connectors.map((connector, index) => (
+              <li key={index}>
                 {connector.name} - Ready: {connector.ready?.toString()} 
-                {pendingConnector?.id === connector.id && ' (Pending)'}
+                {variables?.connector === connector && ' (Pending)'}
               </li>
             ))}
           </ul>
