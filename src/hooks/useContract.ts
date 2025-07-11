@@ -10,9 +10,12 @@ export function usePollsContract() {
   const { data: walletClient } = useWalletClient();
 
   return useMemo(() => {
-    console.log('Contract address:', CONTRACT_ADDRESSES.POLLS_DAPP);
-    console.log('Public client:', !!publicClient);
-    console.log('Wallet client:', !!walletClient);
+    console.log('Contract Debug:', {
+      address: CONTRACT_ADDRESSES.POLLS_DAPP,
+      publicClient: !!publicClient,
+      walletClient: !!walletClient,
+      envVar: import.meta.env.VITE_POLLS_DAPP_ADDRESS
+    });
     
     if (!CONTRACT_ADDRESSES.POLLS_DAPP) {
       console.error('POLLS_DAPP contract address not configured');

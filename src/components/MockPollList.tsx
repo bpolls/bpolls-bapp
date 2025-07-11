@@ -24,14 +24,14 @@ const mockPolls: ActivePoll[] = [
       isOpen: true
     },
     settings: {
-      rewardPerResponse: BigInt('1000000000000000'), // 0.001 BTC
+      rewardPerResponse: BigInt('1000000000000000'), // 0.001 cBTC
       maxResponses: BigInt(500),
       durationDays: BigInt(7),
       minContribution: BigInt(0),
       fundingType: 'community',
-      targetFund: BigInt('100000000000000000'), // 0.1 BTC
+      targetFund: BigInt('100000000000000000'), // 0.1 cBTC
       endTime: BigInt(Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60), // 7 days from now
-      funds: BigInt('75000000000000000'), // 0.075 BTC
+      funds: BigInt('75000000000000000'), // 0.075 cBTC
       rewardToken: '0x0000000000000000000000000000000000000000',
       rewardDistribution: 'equal',
       totalResponses: BigInt(0)
@@ -56,14 +56,14 @@ const mockPolls: ActivePoll[] = [
       isOpen: true
     },
     settings: {
-      rewardPerResponse: BigInt('2000000000000000'), // 0.002 BTC
+      rewardPerResponse: BigInt('2000000000000000'), // 0.002 cBTC
       maxResponses: BigInt(1000),
       durationDays: BigInt(14),
       minContribution: BigInt(0),
       fundingType: 'creator',
-      targetFund: BigInt('500000000000000000'), // 0.5 BTC
+      targetFund: BigInt('500000000000000000'), // 0.5 cBTC
       endTime: BigInt(Math.floor(Date.now() / 1000) + 11 * 24 * 60 * 60), // 11 days from now
-      funds: BigInt('350000000000000000'), // 0.35 BTC
+      funds: BigInt('350000000000000000'), // 0.35 cBTC
       rewardToken: '0x0000000000000000000000000000000000000000',
       rewardDistribution: 'weighted',
       totalResponses: BigInt(0)
@@ -87,14 +87,14 @@ const mockPolls: ActivePoll[] = [
       isOpen: true
     },
     settings: {
-      rewardPerResponse: BigInt('1500000000000000'), // 0.0015 BTC
+      rewardPerResponse: BigInt('1500000000000000'), // 0.0015 cBTC
       maxResponses: BigInt(750),
       durationDays: BigInt(10),
-      minContribution: BigInt('10000000000000000'), // 0.01 BTC min contribution
+      minContribution: BigInt('10000000000000000'), // 0.01 cBTC min contribution
       fundingType: 'community',
-      targetFund: BigInt('250000000000000000'), // 0.25 BTC
+      targetFund: BigInt('250000000000000000'), // 0.25 cBTC
       endTime: BigInt(Math.floor(Date.now() / 1000) + 3 * 24 * 60 * 60 + 18 * 60 * 60), // 3d 18h from now
-      funds: BigInt('200000000000000000'), // 0.2 BTC
+      funds: BigInt('200000000000000000'), // 0.2 cBTC
       rewardToken: '0x0000000000000000000000000000000000000000',
       rewardDistribution: 'equal',
       totalResponses: BigInt(0)

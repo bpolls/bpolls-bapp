@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { WalletConnect } from '@/components/WalletConnect';
 import { PollList } from '@/components/PollList';
 import { CreatePoll } from '@/components/CreatePoll';
+import { RecentPolls } from '@/components/RecentPolls';
 import { DebugPanel } from '@/components/DebugPanel';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, BarChart3, Home, Vote } from 'lucide-react';
@@ -97,7 +98,7 @@ export default function HomePage() {
               <div className="text-center p-6 border rounded-lg">
                 <div className="text-3xl mb-3">💰</div>
                 <h3 className="font-semibold mb-2">Earn Rewards</h3>
-                <p className="text-sm text-muted-foreground">Get paid in BTC for participating in community governance</p>
+                <p className="text-sm text-muted-foreground">Get paid in cBTC for participating in community governance</p>
               </div>
               <div className="text-center p-6 border rounded-lg">
                 <div className="text-3xl mb-3">⚡</div>
@@ -119,9 +120,14 @@ export default function HomePage() {
                   View All Polls
                 </Button>
               </div>
-              <div className="text-muted-foreground text-sm">
+              <div className="text-muted-foreground text-sm mb-4">
                 Quick preview of the latest community polls
               </div>
+              <RecentPolls 
+                limit={3}
+                onViewAllPolls={() => setCurrentView('browse')}
+                onViewPoll={() => setCurrentView('browse')}
+              />
             </div>
           </div>
         )}
