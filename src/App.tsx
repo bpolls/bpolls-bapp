@@ -153,8 +153,8 @@ console.log("App");
           {/* Network Warning Banner */}
           <NetworkWarningBanner />
           
-          {/* Debug Panel */}
-          <DebugPanel />
+          {/* Debug Panel - only show if DEBUG_MODE is enabled */}
+          {import.meta.env.VITE_DEBUG_MODE === 'true' && <DebugPanel />}
           
           {/* Content */}
           <Routes>
