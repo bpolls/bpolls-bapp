@@ -12,3 +12,17 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+// MetaMask Ethereum Provider Types
+interface EthereumProvider {
+  request(args: { method: string; params?: any[] }): Promise<any>;
+  on(event: string, callback: Function): void;
+  removeListener(event: string, callback: Function): void;
+  isMetaMask?: boolean;
+}
+
+declare global {
+  interface Window {
+    ethereum?: EthereumProvider;
+  }
+}

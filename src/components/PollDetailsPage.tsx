@@ -12,6 +12,7 @@ import { ethers } from 'ethers';
 import { CONTRACT_ADDRESSES } from '@/constants/contracts';
 import { POLLS_DAPP_ABI } from '@/constants/abi';
 import { showToast } from '@/lib/toast';
+import { useNetworkValidation } from '@/hooks/useNetworkValidation';
 
 export function PollDetailsPage() {
   const { pollId } = useParams();
@@ -19,12 +20,18 @@ export function PollDetailsPage() {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { poll, loading, error } = usePoll(pollId ? BigInt(pollId) : undefined);
+  const { validateNetwork, isCorrectNetwork } = useNetworkValidation();
   
   const [isVoting, setIsVoting] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string>('');
 
   const handleVote = async () => {
     if (!address || !selectedOption || !walletClient || !poll || !pollId) return;
+
+    // Validate network before proceeding
+    if (!validateNetwork()) {
+      return;
+    }
 
     try {
       setIsVoting(true);
@@ -303,12 +310,20 @@ export function PollDetailsPage() {
                       
                       <Button
                         onClick={handleVote}
-                        disabled={isVoting || !selectedOption || !isActive}
+                        disabled={isVoting || !selectedOption || !isActive || !isCorrectNetwork}
                         className="w-full"
                         size="lg"
                       >
-                        {isVoting ? 'Submitting Vote...' : 'Submit Vote'}
+                        {isVoting ? 'Submitting Vote...' : 
+                         !isCorrectNetwork ? 'Wrong Network' : 'Submit Vote'}
                       </Button>
+                      {!isCorrectNetwork && (
+                        <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                          <p className="text-sm text-yellow-800">
+                            Please switch to Citrea Testnet to vote on this poll
+                          </p>
+                        </div>
+                      )}
                     </>
                   )}
                 </div>

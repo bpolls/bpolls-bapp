@@ -14,6 +14,7 @@ import { ethers } from 'ethers';
 import { CONTRACT_ADDRESSES } from '@/constants/contracts';
 import { POLLS_DAPP_ABI } from '@/constants/abi';
 import { showToast } from '@/lib/toast';
+import { useNetworkValidation } from '@/hooks/useNetworkValidation';
 
 interface CreatePollForm {
   subject: string;
@@ -37,6 +38,7 @@ export function CreatePoll() {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const contract = usePollsContract();
+  const { validateNetwork, isCorrectNetwork } = useNetworkValidation();
   const [isCreating, setIsCreating] = useState(false);
   const [form, setForm] = useState<CreatePollForm>({
     subject: '',
@@ -91,6 +93,11 @@ export function CreatePoll() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contract || !address || !walletClient) return;
+
+    // Validate network before proceeding
+    if (!validateNetwork()) {
+      return;
+    }
 
     // Validate minimum contribution
     const minContribValue = parseFloat(form.minContribution);
@@ -400,12 +407,21 @@ export function CreatePoll() {
             </label>
           </div>
 
+          {!isCorrectNetwork && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                Please switch to Citrea Testnet to create a poll
+              </p>
+            </div>
+          )}
+
           <Button
             type="submit"
-            disabled={isCreating || !form.subject || form.options.filter(o => o.trim()).length < 2}
+            disabled={isCreating || !form.subject || form.options.filter(o => o.trim()).length < 2 || !isCorrectNetwork}
             className="w-full"
           >
-            {isCreating ? 'Creating Poll...' : 'Create Poll'}
+            {isCreating ? 'Creating Poll...' : 
+             !isCorrectNetwork ? 'Wrong Network' : 'Create Poll'}
           </Button>
         </form>
       </CardContent>
