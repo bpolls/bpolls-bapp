@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { WalletConnect } from '@/components/WalletConnect';
 import { NetworkWarningBanner } from '@/components/NetworkWarningBanner';
+import { DebugPanel } from '@/components/DebugPanel';
 import { PollList } from '@/components/PollList';
 import { CreatePoll } from '@/components/CreatePoll';
 import { RecentPolls } from '@/components/RecentPolls';
@@ -151,6 +152,9 @@ console.log("App");
           
           {/* Network Warning Banner */}
           <NetworkWarningBanner />
+          
+          {/* Debug Panel */}
+          <DebugPanel />
           
           {/* Content */}
           <Routes>
